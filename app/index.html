@@ -17,9 +17,9 @@
           <a class="close-btn" data-bind="click: $parent.closeInfoWindow.bind($data, $index)">&times;</a>
           <div class="location" data-bind="text: title,
                                    event: {
-                                    mouseover: $parent.triggerMouseoverEvent.bind($data, $index),
-                                    mouseout: $parent.triggerMouseoutEvent.bind($data, $index),
-                                    click: $parent.triggerClickEvent.bind($data, $index),
+                                    mouseover: $parent.toggleMarkerHighlight.bind($data, $index),
+                                    mouseout: $parent.toggleMarkerHighlight.bind($data, $index),
+                                    click: $parent.openInfoWindow.bind($data, $index),
                                   }"></div>
         </div>
       </div>
