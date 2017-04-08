@@ -39,3 +39,9 @@ jspm_packages
 
 # MacOS
 .DS_Store
+
+# CSS directory
+app/css
+
+$ JS directory
+app/js/lib
