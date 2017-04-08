@@ -1,0 +1,28 @@
+{
+  "name": "neighbourhood_map",
+  "description": "Neighbourhood map built with Google map API.",
+  "main": "index.js",
+  "authors": [
+    "Gitzart"
+  ],
+  "keywords": [
+    "neighbourhood map",
+    "google map API"
+  ],
+  "homepage": "https://github.com/gitzart/neighbourhood",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "knockout": "^3.4.2",
+    "jquery": "^3.2.1",
+    "requirejs": "^2.3.3",
+    "underscore": "^1.8.3",
+    "normalize-css": "^6.0.0"
+  }
+}
