@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <!-- build:css css/style.css -->
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- endbuild -->
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+    <div class="menu">
+      <input class="location-filtering" type="text" placeholder="filter by location" data-bind="value: keyword, valueUpdate: 'afterkeydown', event: {keyup: filterLocations}">
+      <div class="" data-bind="foreach: locations">
+        <div data-bind="visible: filtered">
+          <a class="close-btn" data-bind="click: $parent.closeInfoWindow.bind($data, $index)">&times;</a>
+          <div class="location" data-bind="text: title,
+                                   event: {
+                                    mouseover: $parent.triggerMouseoverEvent.bind($data, $index),
+                                    mouseout: $parent.triggerMouseoutEvent.bind($data, $index),
+                                    click: $parent.triggerClickEvent.bind($data, $index),
+                                  }"></div>
+        </div>
+      </div>
+    </div>
+    <script data-main="js/main" src="js/lib/require.js"></script>
+
+    <!-- Google analysis codes -->
+  </body>
+</html>
