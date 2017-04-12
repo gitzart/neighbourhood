@@ -12,7 +12,7 @@ define([
     self._markers = [];
     self._infowindows = [];
 
-    // Create the map with the given options
+    // Create the map
     self.create = function(opts) {
       self._map.setOptions(opts);
     };
@@ -22,13 +22,13 @@ define([
       self._map.fitBounds(self._bounds);
     };
 
-    // Create an individual marker with the given options
-    // return a marker object
+    // Create a marker
+    // Return a marker object
     self.addMarker = function(opts) {
       return new google.maps.Marker(opts);
     };
 
-    // Show the marker
+    // Show the marker on the map
     self.showMarker = function(marker) {
       if (!marker.getMap()) {
         marker.setMap(self._map);
@@ -46,9 +46,8 @@ define([
       }
     };
 
-    // Create an array of markers with the given data,
-    // bound them to the map
-    // return the marker array
+    // Create an array of markers and bound them to the map
+    // Return a marker array
     self.addMarkers = function(data) {
       data.forEach(function(v, i) {
         var marker = self.addMarker({
@@ -76,20 +75,20 @@ define([
       }, time ? time * durationPerBounce : 2 * durationPerBounce);
     };
 
-    // Create an individual infowindow with the given options
-    // return an infowindow object
+    // Create an infowindow
+    // Return an infowindow object
     self.addInfoWindow = function(opts) {
       return new google.maps.InfoWindow(opts);
     };
 
-    // Open an infowindow on the given marker
-    self.popInfoWindow = function(infowindow, marker) {
+    // Attach an infowindow to a marker
+    self.openInfoWindow = function(infowindow, marker) {
       infowindow.open(self._map, marker);
     };
 
     // Add event listeners to the marker
     self.setMarkerEvents = function(marker) {
-      // Mouse over
+      // On mouse over, change the marker `icon`
       marker.addListener('mouseover', function() {
         marker.setIcon({
           url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
@@ -97,13 +96,15 @@ define([
         });
       });
 
-      // Mouse out
+      // On mouse out, set the default marker `icon`
       marker.addListener('mouseout', function() {
         marker.setIcon(null);
       });
 
-      // Click
+      // On click, animate the marker, create an infowindow and
+      // open it on the marker
       marker.addListener('click', function() {
+        self.bounceMarker(marker);
         var index = marker.get('id');
         var infowindow = self._infowindows[index];
         if (!infowindow) {
@@ -114,27 +115,26 @@ define([
           self._infowindows[index] = infowindow;
           self.setInfoWindowEvents(infowindow);
         }
-        self.bounceMarker(marker);
-        self.popInfoWindow(infowindow, marker);
+        self.openInfoWindow(infowindow, marker);
       });
     };
 
     // Add event listeners to the infowinow
     self.setInfoWindowEvents = function(infowindow) {
-      // Close click
+      // On close button click, remove the infowindow from the DOM
       infowindow.addListener('closeclick', function() {
         infowindow.close();
       });
     };
 
-    // Trigger the marker events with the given event
+    // Trigger the marker events
     self.triggerMarkerEvent = function(marker, event) {
       if (marker && event) {
         google.maps.event.trigger(marker, event);
       }
     };
 
-    // Trigger the infowindow events with the given event
+    // Trigger the infowindow events
     self.triggerInfoWindowEvent = function(infowindow, event) {
       if (infowindow && event) {
         google.maps.event.trigger(infowindow, event);
