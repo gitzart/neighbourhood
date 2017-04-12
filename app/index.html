@@ -2,6 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
     <!-- build:css css/style.css -->
     <link rel="stylesheet" href="/css/normalize.css">
@@ -14,14 +15,25 @@
       <input class="location-filtering" type="text" placeholder="filter by location" data-bind="value: keyword, valueUpdate: 'afterkeydown', event: {keyup: filterLocations}">
       <div class="" data-bind="foreach: locations">
         <div data-bind="visible: filtered">
-          <a class="close-btn" data-bind="click: $parent.closeInfoWindow.bind($data, $index)">&times;</a>
+          <a class="close-btn" data-bind="click: $parent.closeInfoWindow">&times;</a>
           <div class="location" data-bind="text: title,
                                    event: {
-                                    mouseover: $parent.toggleMarkerHighlight.bind($data, $index),
-                                    mouseout: $parent.toggleMarkerHighlight.bind($data, $index),
-                                    click: $parent.openInfoWindow.bind($data, $index),
+                                    mouseover: $parent.toggleMarkerHighlight,
+                                    mouseout: $parent.toggleMarkerHighlight,
+                                    click: $parent.openInfoWindow,
                                   }"></div>
         </div>
+      </div>
+      <p data-bind><span data-bind="text: selectedNearbyVenue().length"></span> Venues</p>
+      <div class="" data-bind="foreach: selectedNearbyVenue">
+        <div>
+          <h3 data-bind="text: name"></h3>
+          <p><img data-bind="attr: {src: categoryIcon}" alt=""><span data-bind="text: categoryName"></span></p>
+          rating: <span data-bind="text: rating"></span>
+          <img data-bind="attr: {src: photo}" alt="">
+          <p data-bind="text: tip"></p>
+        </div>
+        <hr>
       </div>
     </div>
     <script data-main="js/main" src="js/lib/require.js"></script>
