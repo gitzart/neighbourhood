@@ -28,10 +28,17 @@
       <div class="" data-bind="foreach: selectedNearbyVenue">
         <div>
           <h3 data-bind="text: name"></h3>
-          <p><img data-bind="attr: {src: categoryIcon}" alt=""><span data-bind="text: categoryName"></span></p>
+          <p><img data-bind="attr: {src: category.icon}" alt=""><span data-bind="text: category.name"></span></p>
           rating: <span data-bind="text: rating"></span>
           <img data-bind="attr: {src: photo}" alt="">
           <p data-bind="text: tip"></p>
+          <address>
+            <span data-bind="text: address.street"></span>
+            <br>
+            <span data-bind="text: address.state"></span>
+            <br>
+            <span data-bind="text: address.country"></span>
+          </address>
         </div>
         <hr>
       </div>

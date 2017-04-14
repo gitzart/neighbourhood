@@ -8,7 +8,7 @@ define([
 
     // Initialize necessary map features
     self._map = new google.maps.Map(document.querySelector('#map-canvas'));
-    self._bounds = new google.maps.LatLngBounds();
+    self._bounds = undefined;
     self._markers = [];
     self._infowindows = [];
 
@@ -17,9 +17,19 @@ define([
       self._map.setOptions(opts);
     };
 
+    // Create a rectangle area with geographical coordinates
+    // Return a bound object
+    self.createBound = function(latLng) {
+      if (latLng) {
+        return new google.maps.LatLngBounds(latLng.sw, latLng.ne);
+      } else {
+        return new google.maps.LatLngBounds();
+      }
+    };
+
     // Adjust the map size to see all the markers
-    self.bound = function() {
-      self._map.fitBounds(self._bounds);
+    self.fitBounds = function(bounds) {
+      self._map.fitBounds(bounds || self._bounds);
     };
 
     // Create a marker
@@ -49,6 +59,7 @@ define([
     // Create an array of markers and bound them to the map
     // Return a marker array
     self.addMarkers = function(data) {
+      self._bounds = self.createBound();
       data.forEach(function(v, i) {
         var marker = self.addMarker({
           map: self._map,
@@ -61,7 +72,7 @@ define([
         self._markers.push(marker);
         self.setMarkerEvents(marker);
       });
-      self.bound();
+      self.fitBounds();
       return self._markers;
     };
 
