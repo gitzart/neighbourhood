@@ -30,6 +30,7 @@ require([
   'jquery',
   'knockout',
   'viewmodels/location',
+  'extends/handlers',
 ], function($, ko, LocationViewModel) {
   'use strict';
 

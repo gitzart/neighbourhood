@@ -40,7 +40,7 @@
                  class="mdl-list__item"
                  data-bind="visible: isFiltered(),
                             css: {
-                              'location-list__item--current': $root.isLocationFocused().id === id
+                              'location-list__item--current': $root.focusedLocation.id === id
                             }">
               <span class="mdl-list__item-primary-content">
                 <a class="location-list__item"
@@ -72,8 +72,17 @@
       </main>
 
       <div style="display: none" class="overlay"
-           data-bind="visible: isLocationFocused()">
-        <div class="multi-mode-canvas"></div>
+           data-bind="fadeVisible: focusedLocation()">
+        <button class="overlay-close-btn mdl-button mdl-js-button
+                       mdl-button--fab mdl-button--mini-fab"
+                title="Go back"
+                data-bind="click: closeOverlay">
+          <i class="material-icons">close</i>
+        </button>
+        <div id="overlay-map-canvas"
+             data-bind="visible: isOverlayMapFocused()"></div>
+        <div id="street-view-canvas"
+             data-bind="visible: isStreetViewFocused()"></div>
         <div class="venue-layout">
           <h2 class="mdl-typography--headline">Nearby Venues</h2>
           <div class="venue-layout__content" data-bind="foreach: venues().info">

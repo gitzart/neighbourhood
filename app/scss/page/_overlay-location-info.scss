@@ -17,7 +17,21 @@
   }
 }
 
-.multi-mode-canvas {
+.overlay-close-btn {
+  margin: 10px;
+  position: fixed;
+  right: 0;
+  z-index: z(overlay) + 2;
+
+  &,
+  &:active,
+  &:focus,
+  &:hover {
+    background-color: #fff;
+  }
+}
+
+#overlay-map-canvas {
   background-color: $secondary-brand-color;
 
   height: 250px;
@@ -28,6 +42,10 @@
   @media screen and (min-width: $media-sm) {
     height: 400px;
   }
+}
+
+#street-view-canvas {
+  @extend #overlay-map-canvas;
 }
 
 .venue-layout {
