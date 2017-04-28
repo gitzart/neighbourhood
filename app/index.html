@@ -1,50 +1,148 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="us-en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
+    <title>My destinations</title>
+    <!-- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700"> -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <!-- build:css css/style.css -->
     <link rel="stylesheet" href="/css/normalize.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/material.css">
+    <link rel="stylesheet" href="/css/main.css">
     <!-- endbuild -->
   </head>
   <body>
-    <div id="map-canvas"></div>
-    <div class="menu">
-      <input class="location-filtering" type="text" placeholder="filter by location" data-bind="value: keyword, valueUpdate: 'afterkeydown', event: {keyup: filterLocations}">
-      <div class="" data-bind="foreach: locations">
-        <div data-bind="visible: filtered">
-          <a class="close-btn" data-bind="click: $parent.closeInfoWindow">&times;</a>
-          <div class="location" data-bind="text: title,
-                                   event: {
-                                    mouseover: $parent.toggleMarkerHighlight,
-                                    mouseout: $parent.toggleMarkerHighlight,
-                                    click: $parent.openInfoWindow,
-                                  }"></div>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer
+                mdl-layout--fixed-header">
+      <header class="mdl-layout__header mdl-layout__header--seamed">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout__title">My destinations</span>
+          <div class="mdl-layout-spacer"></div>
         </div>
-      </div>
-      <p data-bind><span data-bind="text: selectedNearbyVenue().length"></span> Venues</p>
-      <div class="" data-bind="foreach: selectedNearbyVenue">
-        <div>
-          <h3 data-bind="text: name"></h3>
-          <p><img data-bind="attr: {src: category.icon}" alt=""><span data-bind="text: category.name"></span></p>
-          rating: <span data-bind="text: rating"></span>
-          <img data-bind="attr: {src: photo}" alt="">
-          <p data-bind="text: tip"></p>
-          <address>
-            <span data-bind="text: address.street"></span>
-            <br>
-            <span data-bind="text: address.state"></span>
-            <br>
-            <span data-bind="text: address.country"></span>
-          </address>
-        </div>
-        <hr>
-      </div>
-    </div>
-    <script data-main="js/main" src="js/lib/require.js"></script>
+      </header>
 
-    <!-- Google analysis codes -->
+      <div class="mdl-layout__drawer">
+        <div class="location-search mdl-textfield mdl-js-textfield">
+          <input class="mdl-textfield__input" type="text"
+                 placeholder="Filter by location"
+                 data-bind="value: keyword, valueUpdate: 'keyup',
+                            event: {keyup: filter}">
+          <label class="mdl-textfield__label" for="sample1">
+            Filter by location
+          </label>
+        </div> <!-- /.location-search -->
+        <nav class="mdl-navigation">
+          <div class="location-list mdl-list"
+               data-bind="foreach: destinations().info">
+            <div style="display: none"
+                 class="mdl-list__item"
+                 data-bind="visible: isFiltered(),
+                            css: {
+                              'location-list__item--current': $root.isLocationFocused().id === id
+                            }">
+              <span class="mdl-list__item-primary-content">
+                <a class="location-list__item"
+                   title="Click for more info"
+                   data-bind="text: name,
+                              event: {
+                                click: $root.openInfoWindow,
+                                mouseover: $root.toggleInfoWindow,
+                                mouseout: $root.toggleInfoWindow
+                              }"></a>
+              </span>
+              <span class="mdl-list__item-secondary-action">
+                <i class="material-icons"
+                   title="Mark as favorite"
+                   data-bind="visible: !isFavorite(),
+                              click: $root.toggleFavorite">favorite_border</i>
+                <i class="material-icons"
+                   title="Unmark as favorite"
+                   data-bind="visible: isFavorite(),
+                              click: $root.toggleFavorite">favorite</i>
+              </span>
+            </div> <!-- /.mdl-list__item -->
+          </div> <!-- /.location-list -->
+        </nav>
+      </div> <!-- /.mdl-layout__drawer -->
+
+      <main class="mdl-layout__content">
+        <div id="map-canvas"></div>
+      </main>
+
+      <div style="display: none" class="overlay"
+           data-bind="visible: isLocationFocused()">
+        <div class="multi-mode-canvas"></div>
+        <div class="venue-layout">
+          <h2 class="mdl-typography--headline">Nearby Venues</h2>
+          <div class="venue-layout__content" data-bind="foreach: venues().info">
+              <!-- <p><img data-bind="attr: {src: category.icon}" alt=""><span data-bind="text: category.name"></span></p>
+              rating: <span data-bind="text: rating"></span> -->
+            <div class="venue-card mdl-card mdl-shadow--2dp">
+              <div>
+                <img data-bind="attr: {src: photo, alt: 'Image of ' + name},
+                                click: $root.toggleInfoWindow">
+              </div>
+
+              <div class="mdl-card__title">
+                <h3 class="mdl-card__title-text"
+                    data-bind="text: name, click: $root.toggleInfoWindow"></h3>
+              </div> <!-- /.mdl-card__title -->
+
+              <div class="mdl-card__supporting-text">
+                <div class="mdl-list">
+                  <div class="mdl-list__item" title="tip">
+                    <span class="mdl-list__item-primary-content">
+                      <i class="material-icons
+                                mdl-list__item-icon">chat_bubble_outline</i>
+                      <div data-bind="text: tip"></div>
+                    </span>
+                  </div> <!-- /.mdl-list__item -->
+                  <div class="mdl-list__item" title="address">
+                    <span class="mdl-list__item-primary-content">
+                      <i class="material-icons mdl-list__item-icon">place</i>
+                      <div data-bind="with: address">
+                        <span data-bind="text: street"></span>
+                        <br>
+                        <span data-bind="text: state"></span>
+                        <br>
+                        <span data-bind="text: country"></span>
+                      </div>
+                    </span>
+                  </div> <!-- /.mdl-list__item -->
+                </div> <!-- /.mdl-list -->
+              </div> <!-- /.mdl-card__supporting-text -->
+
+              <div class="mdl-card__actions mdl-card--border">
+                <a class="mdl-button mdl-button--colored mdl-js-button
+                          mdl-js-ripple-effect"
+                   data-bind="click: $root.showInMap">
+                  Show in map
+                </a>
+              </div> <!-- /.mdl-card__actions -->
+
+              <div class="mdl-card__menu">
+                <button class="mdl-button mdl-button--icon mdl-js-button
+                               mdl-js-ripple-effect"
+                        title="Click to toggle the info window"
+                        data-bind="click: $root.toggleInfoWindow">
+                  <i class="material-icons">place</i>
+                </button>
+                <button class="mdl-button mdl-button--icon mdl-js-button
+                               mdl-js-ripple-effect"
+                        title="Mark as favorite"
+                        data-bind="click: $root.toggleInfoWindow">
+                  <i class="material-icons">favorite_border</i>
+                </button>
+              </div> <!-- /.mdl-card__menu -->
+            </div> <!-- /.venue-card -->
+          </div> <!-- /.venue-layout__content -->
+        </div> <!-- /.venue-layout -->
+      </div> <!-- /.overlay -->
+    </div> <!-- /.mdl-layout -->
+
+    <script async src="js/lib/material.js"></script>
+    <script async data-main='js/main' src="js/lib/require.js"></script>
   </body>
 </html>
