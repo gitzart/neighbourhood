@@ -1,0 +1,24 @@
+// Colors
+$primary-brand-color: #af4446;  // Cool red
+$secondary-brand-color: #313a4f;  // Dark blue
+
+// Media breakpoints
+// Breakpoints are copied from Bootstrap CSS.
+$media-sm: 576px;
+$media-md: 768px;
+$media-lg: 992px;
+$media-xl: 1200px;
+
+// UI
+// - Card
+$venue-card-width: 320px;
+
+// - Layer
+// MDL's highest layer is 999.
+$zlayers: (
+  modal     : 1500,
+  overlay   : 1400,
+  dropdown  : 1300,
+  header    : 1200,
+  footer    : 1100
+);

@@ -1,0 +1,9 @@
+// Overflow scroll with 'ios' smooth scrolling
+@mixin overflow-scroll($axis: null) {
+  @if $axis {
+    overflow-#{$axis}: scroll;
+  } @else {
+    overflow: scroll;
+  }
+  -webkit-overflow-scrolling: touch;
+}

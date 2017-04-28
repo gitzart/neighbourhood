@@ -1,0 +1,98 @@
+.overlay {
+  background-color: $primary-brand-color;
+
+  display: flex;
+  flex-flow: row wrap;
+
+  position: absolute;
+
+  height: 100%;
+  width: 100%;
+
+  overflow: hidden;
+  z-index: z(overlay);
+
+  & > * {
+    flex: 1 1 auto;
+  }
+}
+
+.multi-mode-canvas {
+  background-color: $secondary-brand-color;
+
+  height: 250px;
+  width: 100%;
+
+  z-index: z(overlay) + 1;
+
+  @media screen and (min-width: $media-sm) {
+    height: 400px;
+  }
+}
+
+.venue-layout {
+  background: $primary-brand-color;
+  color: #fff;
+
+  height: 100%;
+  width: 100%;
+
+  // Fix unreachable-content-bottom issue
+  margin-top: -250px;
+  padding: {
+    top: 250px;
+    right: 20px;
+    bottom: 20px;
+    left: 20px;
+  };
+
+  @include overflow-scroll(y);
+
+  // Fix unreachable-content-bottom issue
+  @media screen and (min-width: $media-sm) {
+    margin-top: -400px;
+    padding-top: 400px;
+  }
+}
+
+.venue-layout__content {
+  padding: 10px 0 20px;
+  white-space: nowrap;
+  @include overflow-scroll(x);
+}
+
+.venue-card {
+  // Vertical scrolling in mobile devices
+  display: flex;
+  margin: 0 auto 10px;
+  white-space: normal;
+  width: $venue-card-width;
+
+  // Horizontal scrolling in large screens
+  @media screen and (min-width: $media-sm) {
+    display: inline-flex;
+    margin: 0;
+  }
+
+  // Fix loose horizontal scrolling
+  @media screen and (max-width: $venue-card-width + 1) {
+    width: 100%;
+  }
+
+  .mdl-card__supporting-text {
+    width: 100%;
+  }
+
+  .mdl-list__item {
+    line-height: normal;
+    padding: {
+      left: 0;
+      right: 0;
+    }
+  }
+
+  .mdl-card__menu {
+    background-color: rgba($secondary-brand-color, 0.8);
+    border-radius: 3px;
+  }
+}

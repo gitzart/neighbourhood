@@ -1,0 +1,4 @@
+// z-index
+@function z($layer) {
+  @return map-get($zlayers, $layer);
+}

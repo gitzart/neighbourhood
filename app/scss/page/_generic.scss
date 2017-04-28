@@ -1,0 +1,13 @@
+* {
+  &,
+  &::before,
+  &::after {
+    box-sizing: border-box;
+  }
+}
+
+body {
+  background-color: $primary-brand-color;
+  font: 16px/1.7 "Roboto", sans-serif;
+  letter-spacing: 0.5px;
+}

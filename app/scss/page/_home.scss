@@ -1,0 +1,35 @@
+.mdl-layout__content {
+  width: auto;
+  height: 100%;
+}
+
+.mdl-list__item {
+  .material-icons {
+    color: $primary-brand-color;
+  }
+}
+
+#map-canvas {
+  background-color: $secondary-brand-color;
+  height: 100%;
+  width: 100%;
+}
+
+.location-search {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.location-list__item {
+  font-weight: normal;
+
+  // Get the 'location name' more space to be hovered over.
+  // Default `mdl-list__item` padding = 16px
+  margin: -16px 0;
+  padding: 16px 0;
+  width: 100%;
+
+  &--current {
+    background-color: rgb(224,224,224);
+  }
+}
