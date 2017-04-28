@@ -15,7 +15,8 @@ define([
     zoom: 8,
     styles: somosAssassinos,
   });
-  var overlayMap = new GoogleMap();
+  var overlayMap = new GoogleMap().create(
+    document.querySelector('#overlay-map-canvas'));
   var foursquareAPI = {
     version: '20170410',
     clientID: '1C1I0SPV4ZZ4YDKCGFAIJ3BLE0MLOM3RDW1SYKBKUSXLOXIE',
@@ -31,7 +32,9 @@ define([
     });
     self.venues = ko.observable({});
     self.keyword = ko.observable();
-    self.isLocationFocused = ko.observable(false);
+    self.focusedLocation = ko.observable();
+    self.isOverlayMapFocused = ko.observable(false);
+    self.isStreetViewFocused = ko.observable(true);
 
     // Initialize destination data
     self.destinations().info($.map(data, function(d, index) {
@@ -61,17 +64,19 @@ define([
       // Add marker events
       marker.event.click(function() {
         marker.bounce();
-        self.isLocationFocused(destination);
+        self.focusedLocation(destination);
         self.findNearbyVenues(destination);
-        // Can delete mouse events
+        if (self.isOverlayMapFocused()) {
+          infoWindow.open(marker._marker);
+        }
       })
         .mouseOver(function() {
-          if (!self.isLocationFocused()) {
+          if (!self.isOverlayMapFocused()) {
             infoWindow.open(marker._marker);
           }
         })
         .mouseOut(function() {
-          if (!self.isLocationFocused()) {
+          if (!self.isOverlayMapFocused()) {
             infoWindow.close();
           }
         });
@@ -79,7 +84,6 @@ define([
       // Add infoWindow events
       infoWindow.event.close(function() {
         infoWindow.close();
-        self.isLocationFocused(false);
       });
 
       return destination;
@@ -114,7 +118,7 @@ define([
     // Both destinations and venues.
     self.openInfoWindow = function(location) {
       // Slide in the side navigation drawer.
-      document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
+      // document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
       location.marker.trigger.click();
     };
 
@@ -132,10 +136,10 @@ define([
       } else if (evt.type === 'click') {  // Venue marker events
         if (location.infoWindow.isActive) {
           location.infoWindow.isActive = false;
-          location.infoWindow.trigger.close();
+          self.closeInfoWindow(location);
         } else {
           location.infoWindow.isActive = true;
-          location.marker.trigger.click();
+          self.openInfoWindow(location);
         }
       }
     };
@@ -144,26 +148,32 @@ define([
       destination.isFavorite(!destination.isFavorite());
     };
 
+    self.closeOverlay = function() {
+      self.focusedLocation().marker._marker.setMap(map._map);
+      self.focusedLocation(false);
+      self.isOverlayMapFocused(false);
+      self.isStreetViewFocused(true);
+    };
+
     self.showInMap = function(venue) {
-      var dest = self.isLocationFocused();
-      overlayMap.create(document.querySelector('.multi-mode-canvas'), {
-        center: {lat: 40.7713024, lng: -73.9332393},
-        zoom: 8,
-      });
+      var dest = self.focusedLocation();
+      if (!self.isOverlayMapFocused()) {
+        self.isOverlayMapFocused(true);
+        self.isStreetViewFocused(false);
+        overlayMap.trigger.resize();
+        self.closeInfoWindow(dest);  // Fix the bounding bug
+        dest.marker._marker.setMap(overlayMap._map);
+      }
+      venue.marker.show();
       overlayMap.bounds().create()
-        .extend(dest.marker._marker.getPosition())
-        .extend(venue.marker._marker.getPosition())
+        .extend(dest.position)
+        .extend(venue.position)
         .fit();
-      dest.marker._marker.setMap(overlayMap._map);
-      venue.marker.addIcon(
-        'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
-      )._marker.setMap(overlayMap._map);
     };
 
     // Find the interesting venues around the selected destination.
     self.findNearbyVenues = function(dest) {
       if (dest.nearbyVenues.info().length) {
-        dest.nearbyVenues.bounds.fit();
         self.venues(dest.nearbyVenues);
         return;
       }
@@ -180,10 +190,6 @@ define([
         .done(function(data, status, xhr) {
           var venues = data.response.groups[0].items;
           dest.nearbyVenues.info($.map(venues, function(v, index) {
-            if (!v.venue || !v.tips) {
-              return null;
-            }
-
             var name = v.venue.name;
 
             var position = {
@@ -191,14 +197,15 @@ define([
               lng: v.venue.location.lng,
             };
 
-            var marker = map.marker().create({
+            var marker = overlayMap.marker().create({
               id: index,
               position: position,
               title: name,
-              animation: true,
-            }).addIcon('https://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+            })
+              .addIcon('https://maps.google.com/mapfiles/ms/icons/yellow-dot.png')
+              .hide();
 
-            var infoWindow = map.infoWindow().create({
+            var infoWindow = overlayMap.infoWindow().create({
               id: index,
               content: name,
               maxWidth: 200,
@@ -220,7 +227,7 @@ define([
             venue.photo = v.venue.photos.groups[0].items[0].prefix +
               'width320' + v.venue.photos.groups[0].items[0].suffix;
             venue.rating = v.venue.rating;
-            venue.tip = v.tips[0].text;
+            venue.tip = v.tips ? v.tips[0].text : 'No tips available :(';
 
             dest.nearbyVenues.bounds.extend(marker._marker.getPosition());
 
@@ -235,7 +242,6 @@ define([
 
             return venue;
           }));
-          dest.nearbyVenues.bounds.fit();
           self.venues(dest.nearbyVenues);
         })
         .fail(function(xhr, status, error) {
