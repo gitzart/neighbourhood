@@ -1,8 +1,3 @@
-.mdl-layout__content {
-  width: auto;
-  height: 100%;
-}
-
 .mdl-list__item {
   .material-icons {
     color: $primary-brand-color;
@@ -13,6 +8,7 @@
   background-color: $secondary-brand-color;
   height: 100%;
   width: 100%;
+  position: absolute;
 }
 
 .location-search {
@@ -28,8 +24,4 @@
   margin: -16px 0;
   padding: 16px 0;
   width: 100%;
-
-  &--current {
-    background-color: rgb(224,224,224);
-  }
 }

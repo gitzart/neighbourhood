@@ -5,6 +5,7 @@
   flex-flow: row wrap;
 
   position: absolute;
+  top: 0;
 
   height: 100%;
   width: 100%;
@@ -42,10 +43,6 @@
   @media screen and (min-width: $media-sm) {
     height: 400px;
   }
-}
-
-#street-view-canvas {
-  @extend #overlay-map-canvas;
 }
 
 .venue-layout {
@@ -112,5 +109,37 @@
   .mdl-card__menu {
     background-color: rgba($secondary-brand-color, 0.8);
     border-radius: 3px;
+  }
+}
+
+.venue-card__photo {
+  width: 100%;
+
+  // Show natural size on mobile devices
+  img {
+    height: auto;
+    width: 100%;
+
+    @media screen and (min-width: $media-sm) {
+      height: $venue-card-width;
+      object-fit: cover;
+    }
+  }
+}
+
+.venue-card__category {
+  background-color: rgba($secondary-brand-color, 0.9);
+
+  height: 50px;
+  width: 100%;
+
+  padding: 0 16px;
+  position: absolute;
+  margin-top: -50px;
+
+  .mdl-list,
+  .mdl-list__item {
+    color: #ccc;
+    padding: 0;
   }
 }

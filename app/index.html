@@ -4,12 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My destinations</title>
-    <!-- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700"> -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <!-- build:css css/style.css -->
     <link rel="stylesheet" href="/css/normalize.css">
-    <link rel="stylesheet" href="/css/material.css">
+    <link rel="stylesheet" href="/css/material.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <!-- endbuild -->
   </head>
@@ -19,7 +18,6 @@
       <header class="mdl-layout__header mdl-layout__header--seamed">
         <div class="mdl-layout__header-row">
           <span class="mdl-layout__title">My destinations</span>
-          <div class="mdl-layout-spacer"></div>
         </div>
       </header>
 
@@ -29,7 +27,8 @@
                  placeholder="Filter by location"
                  data-bind="value: keyword, valueUpdate: 'keyup',
                             event: {keyup: filter}">
-          <label class="mdl-textfield__label" for="sample1">
+          <label style="display: none" class="mdl-textfield__label"
+                 for="sample1" data-bind="visible: true">
             Filter by location
           </label>
         </div> <!-- /.location-search -->
@@ -38,10 +37,7 @@
                data-bind="foreach: destinations().info">
             <div style="display: none"
                  class="mdl-list__item"
-                 data-bind="visible: isFiltered(),
-                            css: {
-                              'location-list__item--current': $root.focusedLocation.id === id
-                            }">
+                 data-bind="visible: isFiltered()">
               <span class="mdl-list__item-primary-content">
                 <a class="location-list__item"
                    title="Click for more info"
@@ -79,19 +75,31 @@
                 data-bind="click: closeOverlay">
           <i class="material-icons">close</i>
         </button>
-        <div id="overlay-map-canvas"
-             data-bind="visible: isOverlayMapFocused()"></div>
-        <div id="street-view-canvas"
-             data-bind="visible: isStreetViewFocused()"></div>
+        <div id="overlay-map-canvas"></div>
         <div class="venue-layout">
           <h2 class="mdl-typography--headline">Nearby Venues</h2>
           <div class="venue-layout__content" data-bind="foreach: venues().info">
-              <!-- <p><img data-bind="attr: {src: category.icon}" alt=""><span data-bind="text: category.name"></span></p>
-              rating: <span data-bind="text: rating"></span> -->
             <div class="venue-card mdl-card mdl-shadow--2dp">
-              <div>
-                <img data-bind="attr: {src: photo, alt: 'Image of ' + name},
-                                click: $root.toggleInfoWindow">
+              <div class="">
+                <div class="venue-card__photo">
+                  <img data-bind="attr: {src: photo, alt: 'Image of ' + name},
+                                  click: $root.toggleInfoWindow">
+                </div> <!-- /.venue-card__photo -->
+
+                <div class="venue-card__category">
+                  <div class="mdl-list">
+                    <div class="mdl-list__item" title="category">
+                      <span class="mdl-list__item-primary-content"
+                            data-bind="with: category">
+                        <img data-bind="attr: {
+                                          src: icon,
+                                          alt: 'Icon picture of ' + name
+                                        }">
+                        <div data-bind="text: name"></div>
+                      </span>
+                    </div> <!-- /.mdl-list__item -->
+                  </div> <!-- /.mdl-list -->
+                </div> <!-- /.venue-card__category -->
               </div>
 
               <div class="mdl-card__title">
@@ -101,6 +109,15 @@
 
               <div class="mdl-card__supporting-text">
                 <div class="mdl-list">
+                  <div class="mdl-list__item" title="rating">
+                    <span class="mdl-list__item-primary-content">
+                      <i class="material-icons
+                                mdl-list__item-icon">star_border</i>
+                      <div>
+                        Rating: <span data-bind="text: rating"></span>
+                      </div>
+                    </span>
+                  </div> <!-- /.mdl-list__item -->
                   <div class="mdl-list__item" title="tip">
                     <span class="mdl-list__item-primary-content">
                       <i class="material-icons
@@ -123,26 +140,12 @@
                 </div> <!-- /.mdl-list -->
               </div> <!-- /.mdl-card__supporting-text -->
 
-              <div class="mdl-card__actions mdl-card--border">
-                <a class="mdl-button mdl-button--colored mdl-js-button
-                          mdl-js-ripple-effect"
-                   data-bind="click: $root.showInMap">
-                  Show in map
-                </a>
-              </div> <!-- /.mdl-card__actions -->
-
               <div class="mdl-card__menu">
                 <button class="mdl-button mdl-button--icon mdl-js-button
                                mdl-js-ripple-effect"
-                        title="Click to toggle the info window"
-                        data-bind="click: $root.toggleInfoWindow">
+                        title="Show in map"
+                        data-bind="click: $root.showInMap">
                   <i class="material-icons">place</i>
-                </button>
-                <button class="mdl-button mdl-button--icon mdl-js-button
-                               mdl-js-ripple-effect"
-                        title="Mark as favorite"
-                        data-bind="click: $root.toggleInfoWindow">
-                  <i class="material-icons">favorite_border</i>
                 </button>
               </div> <!-- /.mdl-card__menu -->
             </div> <!-- /.venue-card -->
@@ -151,7 +154,7 @@
       </div> <!-- /.overlay -->
     </div> <!-- /.mdl-layout -->
 
-    <script async src="js/lib/material.js"></script>
+    <script async src="js/lib/material.min.js"></script>
     <script async data-main='js/main' src="js/lib/require.js"></script>
   </body>
 </html>

@@ -11,3 +11,18 @@ body {
   font: 16px/1.7 "Roboto", sans-serif;
   letter-spacing: 0.5px;
 }
+
+.error {
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column wrap;
+
+  height: 100%;
+  width: 100%;
+
+  padding: 10px;
+  text-align: center;
+}
