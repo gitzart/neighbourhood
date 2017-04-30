@@ -26,7 +26,6 @@ gulp.task('styles', function() {
     .pipe($.sass())
     .pipe($.autoprefixer())
     .pipe(gulp.dest('app/css'))
-    .pipe(gulp.dest('dist/css'))
     .pipe(browserSync.stream());
 });
 
@@ -60,7 +59,7 @@ gulp.task('html', function() {
     .pipe($.if('*.html', $.htmlmin({
       caseSensitive: true,
       collapseBooleanAttributes: true,
-      collapseWhitespace: true,
+      // collapseWhitespace: true,
       minifyCSS: true,
       minifyJS: true,
       minifyURLs: true,
@@ -87,6 +86,15 @@ gulp.task('images', function() {
 });
 
 /* =======================================================
+ =================== Documenting
+ ========================================================= */
+
+gulp.task('doc', function(cb) {
+  gulp.src(['README.md', 'app/js/googlemap.js'], {read: false})
+    .pipe($.jsdoc3(cb));
+});
+
+/* =======================================================
  =================== Copying
  ========================================================= */
 
@@ -100,6 +108,7 @@ gulp.task('copy:any', function() {
 // Copy CSS libraries to app directory
 gulp.task('copy:css', function() {
   return gulp.src([
+    // Add specific CSS file path
     'bower_components/normalize-css/normalize.css'
   ])
     .pipe($.newer('app/css'))
@@ -109,10 +118,10 @@ gulp.task('copy:css', function() {
 // Copy JS libraries to app directory
 gulp.task('copy:js', function() {
   return gulp.src([
+    // Add specific JS file path
     'bower_components/requirejs/require.js',
     'bower_components/knockout/dist/knockout.js',
     'bower_components/jquery/dist/jquery.js',
-    'bower_components/underscore/underscore.js'
   ])
     .pipe($.newer('app/js/lib'))
     .pipe(gulp.dest('app/js/lib'));
@@ -160,8 +169,10 @@ gulp.task('build', function(cb) {
 gulp.task('serve:dist', ['build'], function() {
   browserSync.init({
     notify: false,
-    // Comment the next line to test on the default browser
-    browser: ['google chrome'],
+    // browser: ['google chrome'],
+    // Comment the previous line and uncomment the next line
+    // to test on all 4 popular browsers
+    browser: ['google chrome', 'safari', 'firefox', 'opera'],
     logPrefix: 'Neighbourhood',
     scrollingElementMapping: ['body'],
     https: true,
@@ -174,10 +185,10 @@ gulp.task('serve:dist', ['build'], function() {
 gulp.task('default', ['copy', 'styles'], function() {
   browserSync.init({
     notify: true,
-    browser: ['google chrome'],
+    // browser: ['google chrome'],
     // Comment the previous line and uncomment the next line
     // to test on all 4 popular browsers
-    // browser: ['google chrome', 'safari', 'firefox', 'opera'],
+    browser: ['google chrome', 'safari', 'firefox', 'opera'],
     logPrefix: 'Neighbourhood',
     scrollingElementMapping: ['body'],
     // Uncomment the next line to test with secure HTTP
