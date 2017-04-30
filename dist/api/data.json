@@ -1,0 +1,74 @@
+{
+  "locations": [
+    {
+      "name": "Park Ave Penthouse",
+      "position": {
+        "lat": 40.7713024,
+        "lng": -73.9632393
+      }
+    },
+    {
+      "name": "Chelsea Loft",
+      "position": {
+        "lat": 40.7444883,
+        "lng": -73.9949465
+      }
+    },
+    {
+      "name": "Union Square Open Floor Plan",
+      "position": {
+        "lat": 40.7347062,
+        "lng": -73.9895759
+      }
+    },
+    {
+      "name": "East Village Hip Studio",
+      "position": {
+        "lat": 40.7281777,
+        "lng": -73.984377
+      }
+    },
+    {
+      "name": "TriBeCa Artsy Bachelor Pad",
+      "position": {
+        "lat": 40.7195264,
+        "lng": -74.0089934
+      }
+    },
+    {
+      "name": "Chinatown Homey Space",
+      "position": {
+        "lat": 40.7180628,
+        "lng": -73.9961237
+      }
+    },
+    {
+      "name": "Brooklyn",
+      "position": {
+        "lat": 40.702963,
+        "lng": -73.992062
+      }
+    },
+    {
+      "name": "Astoria",
+      "position": {
+        "lat": 40.7713024,
+        "lng": -73.9332393
+      }
+    },
+    {
+      "name": "In the heart of the sea",
+      "position": {
+        "lat": 30.291013,
+        "lng": -42.9709707
+      }
+    },
+    {
+      "name": "Centre de la Terre",
+      "position": {
+        "lat": 0,
+        "lng": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="us-en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>My destinations</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+      <header class="mdl-layout__header mdl-layout__header--seamed">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout__title">My destinations</span>
+        </div>
+      </header>
+
+      <div class="mdl-layout__drawer">
+        <div class="location-search mdl-textfield mdl-js-textfield">
+          <input class="mdl-textfield__input" placeholder="Filter by location" data-bind="value: keyword, valueUpdate: 'keyup',
+                            event: {keyup: filter}">
+          <label style="display:none" class="mdl-textfield__label" for="sample1" data-bind="visible: true">
+            Filter by location
+          </label>
+        </div> 
+        <nav class="mdl-navigation">
+          <div class="location-list mdl-list" data-bind="foreach: destinations().info">
+            <div style="display:none" class="mdl-list__item" data-bind="visible: isFiltered()">
+              <span class="mdl-list__item-primary-content">
+                <a class="location-list__item" title="Click for more info" data-bind="text: name,
+                              event: {
+                                click: $root.openInfoWindow,
+                                mouseover: $root.toggleInfoWindow,
+                                mouseout: $root.toggleInfoWindow
+                              }"></a>
+              </span>
+              <span class="mdl-list__item-secondary-action">
+                <i class="material-icons" title="Mark as favorite" data-bind="visible: !isFavorite(),
+                              click: $root.toggleFavorite">favorite_border</i>
+                <i class="material-icons" title="Unmark as favorite" data-bind="visible: isFavorite(),
+                              click: $root.toggleFavorite">favorite</i>
+              </span>
+            </div> 
+          </div> 
+        </nav>
+      </div> 
+
+      <main class="mdl-layout__content">
+        <div id="map-canvas"></div>
+      </main>
+
+      <div style="display:none" class="overlay" data-bind="fadeVisible: focusedLocation()">
+        <button class="overlay-close-btn mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" title="Go back" data-bind="click: closeOverlay">
+          <i class="material-icons">close</i>
+        </button>
+        <div id="overlay-map-canvas"></div>
+        <div class="venue-layout">
+          <h2 class="mdl-typography--headline">Nearby Venues</h2>
+          <div class="venue-layout__content" data-bind="foreach: venues().info">
+            <div class="venue-card mdl-card mdl-shadow--2dp">
+              <div>
+                <div class="venue-card__photo">
+                  <img data-bind="attr: {src: photo, alt: 'Image of ' + name},
+                                  click: $root.toggleInfoWindow">
+                </div> 
+
+                <div class="venue-card__category">
+                  <div class="mdl-list">
+                    <div class="mdl-list__item" title="category">
+                      <span class="mdl-list__item-primary-content" data-bind="with: category">
+                        <img data-bind="attr: {
+                                          src: icon,
+                                          alt: 'Icon picture of ' + name
+                                        }">
+                        <div data-bind="text: name"></div>
+                      </span>
+                    </div> 
+                  </div> 
+                </div> 
+              </div>
+
+              <div class="mdl-card__title">
+                <h3 class="mdl-card__title-text" data-bind="text: name, click: $root.toggleInfoWindow"></h3>
+              </div> 
+
+              <div class="mdl-card__supporting-text">
+                <div class="mdl-list">
+                  <div class="mdl-list__item" title="rating">
+                    <span class="mdl-list__item-primary-content">
+                      <i class="material-icons mdl-list__item-icon">star_border</i>
+                      <div>
+                        Rating: <span data-bind="text: rating"></span>
+                      </div>
+                    </span>
+                  </div> 
+                  <div class="mdl-list__item" title="tip">
+                    <span class="mdl-list__item-primary-content">
+                      <i class="material-icons mdl-list__item-icon">chat_bubble_outline</i>
+                      <div data-bind="text: tip"></div>
+                    </span>
+                  </div> 
+                  <div class="mdl-list__item" title="address">
+                    <span class="mdl-list__item-primary-content">
+                      <i class="material-icons mdl-list__item-icon">place</i>
+                      <div data-bind="with: address">
+                        <span data-bind="text: street"></span>
+                        <br>
+                        <span data-bind="text: state"></span>
+                        <br>
+                        <span data-bind="text: country"></span>
+                      </div>
+                    </span>
+                  </div> 
+                </div> 
+              </div> 
+
+              <div class="mdl-card__menu">
+                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" title="Show in map" data-bind="click: $root.showInMap">
+                  <i class="material-icons">place</i>
+                </button>
+              </div> 
+            </div> 
+          </div> 
+        </div> 
+      </div> 
+    </div> 
+
+    <script async src="js/lib/material.min.js"></script>
+    <script async data-main="js/main" src="js/lib/require.js"></script>
+  
+
