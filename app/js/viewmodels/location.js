@@ -33,8 +33,6 @@ define([
     self.venues = ko.observable({});
     self.keyword = ko.observable();
     self.focusedLocation = ko.observable();
-    self.isOverlayMapFocused = ko.observable(false);
-    self.isStreetViewFocused = ko.observable(true);
 
     // Initialize destination data
     self.destinations().info($.map(data, function(d, index) {
@@ -45,6 +43,10 @@ define([
         animation: true,
       });
 
+      if (d.isFavorite) {
+        marker.addIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
+      }
+
       var infoWindow = map.infoWindow().create({
         id: index,
         content: d.name,
@@ -53,9 +55,9 @@ define([
 
       // Create new `Location` instance and add new properties.
       var destination = new Location(index, d.name, d.position,
-                                     marker, infoWindow);
+                                     marker, infoWindow, d.isFavorite);
       destination.nearbyVenues = {
-        bounds: map.bounds().create(),
+        bounds: overlayMap.bounds().create(),
         info: ko.observableArray(),
       };
 
@@ -64,19 +66,26 @@ define([
       // Add marker events
       marker.event.click(function() {
         marker.bounce();
-        self.focusedLocation(destination);
-        self.findNearbyVenues(destination);
-        if (self.isOverlayMapFocused()) {
-          infoWindow.open(marker._marker);
+        infoWindow.open(marker._marker);
+        if (!self.focusedLocation()) {
+          self.focusedLocation(destination);
+          // Move `destination` marker to the `overlayMap`.
+          overlayMap.trigger.resize();
+          overlayMap._map.setOptions({
+            center: destination.position,
+            zoom: 16,
+          });
+          destination.marker._marker.setMap(overlayMap._map);
+          self.findNearbyVenues(destination);
         }
       })
         .mouseOver(function() {
-          if (!self.isOverlayMapFocused()) {
+          if (!self.focusedLocation()) {
             infoWindow.open(marker._marker);
           }
         })
         .mouseOut(function() {
-          if (!self.isOverlayMapFocused()) {
+          if (!self.focusedLocation()) {
             infoWindow.close();
           }
         });
@@ -89,16 +98,25 @@ define([
       return destination;
     }));
 
-    // Bound the destination markers, not venue markers.
-    self.boundDestinations = function() {
-      self.destinations().bounds.fit();
-      // map.event.centerChanged(function() {
-      //   map._center = self.destinations().bounds.center();
-      // });
+    // Bound initially when the destination data loads.
+    self.destinations().bounds.fit();
+
+    // Save the destinations to the localStorage.
+    self.saveDestinations = function() {
+      var dests = self.destinations().info();
+      var o = ko.observableArray($.map(dests, function(d, index) {
+        return {
+          id: d.id,
+          name: d.name,
+          position: d.position,
+          isFavorite: d.isFavorite,
+        };
+      }));
+      localStorage.setItem('destinations', ko.toJSON(o));
     };
 
-    // Bound initially when the destination data loads.
-    self.boundDestinations();
+    // Save the destinations initially
+    self.saveDestinations();
 
     // Search the destinations
     self.filter = function() {
@@ -117,8 +135,6 @@ define([
     // Open, close, or toggle the infoWindow of `Location` instances.
     // Both destinations and venues.
     self.openInfoWindow = function(location) {
-      // Slide in the side navigation drawer.
-      // document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
       location.marker.trigger.click();
     };
 
@@ -129,11 +145,15 @@ define([
     self.toggleInfoWindow = function(location, evt) {
       // Marker events of `destinations` and `venues` are
       // defined differently.
-      if (evt.type === 'mouseover') {  // Destination marker events
+      // Destination marker events
+      if (evt.type === 'mouseover') {
         location.marker.trigger.mouseOver();
       } else if (evt.type === 'mouseout') {
         location.marker.trigger.mouseOut();
-      } else if (evt.type === 'click') {  // Venue marker events
+      }
+
+      // Venue marker events
+      if (evt.type === 'click') {
         if (location.infoWindow.isActive) {
           location.infoWindow.isActive = false;
           self.closeInfoWindow(location);
@@ -144,26 +164,36 @@ define([
       }
     };
 
+    // Mark/unmark a favorite destination.
     self.toggleFavorite = function(destination) {
+      if (destination.isFavorite()) {
+        destination.marker.removeIcon();
+      } else {
+        destination.marker.addIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
+      }
       destination.isFavorite(!destination.isFavorite());
+      self.saveDestinations();
     };
 
+    // Close the overlay HTML
     self.closeOverlay = function() {
       self.focusedLocation().marker._marker.setMap(map._map);
       self.focusedLocation(false);
-      self.isOverlayMapFocused(false);
-      self.isStreetViewFocused(true);
     };
 
+    // Show the destination and venue markers on the map.
     self.showInMap = function(venue) {
       var dest = self.focusedLocation();
-      if (!self.isOverlayMapFocused()) {
-        self.isOverlayMapFocused(true);
-        self.isStreetViewFocused(false);
-        overlayMap.trigger.resize();
-        self.closeInfoWindow(dest);  // Fix the bounding bug
-        dest.marker._marker.setMap(overlayMap._map);
-      }
+      // Hide previously opened markers and infowindows.
+      $.each(dest.nearbyVenues.info(), function(index, v) {
+        v.marker.hide();
+        self.closeInfoWindow(v);
+      });
+      // Fixed the bounding bug
+      // BUG: `infoWindow` takes its own space when opened
+      // which results in some markers, when bounded, cannot be seen,
+      // clipped, hidden by the map viewport.
+      self.closeInfoWindow(dest);
       venue.marker.show();
       overlayMap.bounds().create()
         .extend(dest.position)
@@ -178,6 +208,12 @@ define([
         return;
       }
 
+      // Reset the `venues` instance.
+      self.venues({});
+
+      // Empty the '.venue-layout__content' HTML element
+      $('.venue-layout__content').empty();
+
       // Fetch the data if not done already.
       $.get('https://api.foursquare.com/v2/venues/explore', {
         ll: dest.position.lat + ',' + dest.position.lng,
@@ -189,6 +225,16 @@ define([
       })
         .done(function(data, status, xhr) {
           var venues = data.response.groups[0].items;
+
+          if (venues.length === 0) {
+            $('.venue-layout__content').empty();
+            $('<div/>')
+              .addClass('error')
+              .append('No venues exist :(')
+              .appendTo('.venue-layout__content');
+            return;
+          }
+
           dest.nearbyVenues.info($.map(venues, function(v, index) {
             var name = v.venue.name;
 
@@ -222,7 +268,7 @@ define([
             venue.category = {
               name: v.venue.categories[0].name,
               icon: v.venue.categories[0].icon.prefix +
-                'bg_32' + v.venue.categories[0].icon.suffix,
+                '32' + v.venue.categories[0].icon.suffix,
             };
             venue.photo = v.venue.photos.groups[0].items[0].prefix +
               'width320' + v.venue.photos.groups[0].items[0].suffix;
@@ -245,7 +291,12 @@ define([
           self.venues(dest.nearbyVenues);
         })
         .fail(function(xhr, status, error) {
-          console.log(xhr, status, error);
+          $('.venue-layout__content').empty();
+          $('<div/>')
+            .addClass('error mdl-typography--display-1')
+            .append(xhr.status + ' ' + error)
+            .appendTo('.venue-layout__content');
+          throw error;
         });
     };
   }

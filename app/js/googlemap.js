@@ -244,7 +244,6 @@ define([
     var self = this;
 
     self._map = undefined;
-    self._center = undefined;
 
     /**
      * Create a map.
@@ -257,6 +256,12 @@ define([
     self.create = function(container, opts) {
       self._map = new google.maps.Map(container, opts || null);
       return self;
+    };
+
+    self.trigger = {
+      resize: function() {
+        google.maps.event.trigger(self._map, 'resize');
+      },
     };
 
     /**
