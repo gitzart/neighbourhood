@@ -78,6 +78,9 @@
         <div id="overlay-map-canvas"></div>
         <div class="venue-layout">
           <h2 class="mdl-typography--headline">Nearby Venues</h2>
+          <div class="error"
+               data-bind="fadeVisible: hasError(), text: hasError">
+          </div>
           <div class="venue-layout__content" data-bind="foreach: venues().info">
             <div class="venue-card mdl-card mdl-shadow--2dp">
               <div class="">

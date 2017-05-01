@@ -18,8 +18,7 @@ require.onError = function(err) {
   if (typeof google === 'undefined') {
     $('#map-canvas').empty();
     $('<div/>')
-      .addClass('error mdl-typography--subhead')
-      .append('<i class="material-icons">error_outline</i>')
+      .addClass('error')
       .append('Google Map cannot be accessed!<br>')
       .append('Check the connection or the firewall.')
       .appendTo('#map-canvas');
@@ -48,12 +47,11 @@ require([
         if (locations.length !== 0) {
           ko.applyBindings(new LocationViewModel(locations));
         } else {
-          console.log('No data is found.');
+          alert('No locations are found.');
         }
       })
       .fail(function(xhr, status, error) {
-        console.log(xhr.status);
-        console.log(status);
+        alert('No locations are found.');
         throw error;
       });
   }

@@ -33,6 +33,7 @@ define([
     self.venues = ko.observable({});
     self.keyword = ko.observable();
     self.focusedLocation = ko.observable();
+    self.hasError = ko.observable(false);
 
     // Initialize destination data
     self.destinations().info($.map(data, function(d, index) {
@@ -210,9 +211,7 @@ define([
 
       // Reset the `venues` instance.
       self.venues({});
-
-      // Empty the '.venue-layout__content' HTML element
-      $('.venue-layout__content').empty();
+      self.hasError(false);
 
       // Fetch the data if not done already.
       $.get('https://api.foursquare.com/v2/venues/explore', {
@@ -227,11 +226,7 @@ define([
           var venues = data.response.groups[0].items;
 
           if (venues.length === 0) {
-            $('.venue-layout__content').empty();
-            $('<div/>')
-              .addClass('error')
-              .append('No venues exist :(')
-              .appendTo('.venue-layout__content');
+            self.hasError('No venues exist :(');
             return;
           }
 
@@ -291,11 +286,8 @@ define([
           self.venues(dest.nearbyVenues);
         })
         .fail(function(xhr, status, error) {
-          $('.venue-layout__content').empty();
-          $('<div/>')
-            .addClass('error mdl-typography--display-1')
-            .append(xhr.status + ' ' + error)
-            .appendTo('.venue-layout__content');
+          self.hasError('Venues do not exist or cannot be loaded! Check the connection or the firewall.');
+          console.log(xhr.status, status, error);
           throw error;
         });
     };
