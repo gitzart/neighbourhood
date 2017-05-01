@@ -122,6 +122,7 @@ gulp.task('copy:js', function() {
     'bower_components/requirejs/require.js',
     'bower_components/knockout/dist/knockout.js',
     'bower_components/jquery/dist/jquery.js',
+    'bower_components/requirejs-plugins/src/async.js',
   ])
     .pipe($.newer('app/js/lib'))
     .pipe(gulp.dest('app/js/lib'));
@@ -169,10 +170,10 @@ gulp.task('build', function(cb) {
 gulp.task('serve:dist', ['build'], function() {
   browserSync.init({
     notify: false,
-    // browser: ['google chrome'],
+    browser: ['google chrome'],
     // Comment the previous line and uncomment the next line
     // to test on all 4 popular browsers
-    browser: ['google chrome', 'safari', 'firefox', 'opera'],
+    // browser: ['google chrome', 'safari', 'firefox', 'opera'],
     logPrefix: 'Neighbourhood',
     scrollingElementMapping: ['body'],
     https: true,
@@ -185,10 +186,10 @@ gulp.task('serve:dist', ['build'], function() {
 gulp.task('default', ['copy', 'styles'], function() {
   browserSync.init({
     notify: true,
-    // browser: ['google chrome'],
+    browser: ['google chrome'],
     // Comment the previous line and uncomment the next line
     // to test on all 4 popular browsers
-    browser: ['google chrome', 'safari', 'firefox', 'opera'],
+    // browser: ['google chrome', 'safari', 'firefox', 'opera'],
     logPrefix: 'Neighbourhood',
     scrollingElementMapping: ['body'],
     // Uncomment the next line to test with secure HTTP

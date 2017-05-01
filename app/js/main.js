@@ -8,14 +8,14 @@ require.config({
       'https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min',
       'lib/knockout',
     ],
-    mapapi: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC_kU9l3eJ20DEPF2qq_XsQcz5ejxwbyns&v=3&callback=define',
+    async: 'lib/async',
   },
 });
 
 // Error error on the wall, who is the buggiest of them all.
 require.onError = function(err) {
   // Google API error
-  if (typeof google === 'undefined' && err.requireType === 'scripterror') {
+  if (typeof google === 'undefined') {
     $('#map-canvas').empty();
     $('<div/>')
       .addClass('error mdl-typography--subhead')

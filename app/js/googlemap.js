@@ -1,6 +1,6 @@
 define([
-  'mapapi',
-], function(mapapi) {
+  'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyC_kU9l3eJ20DEPF2qq_XsQcz5ejxwbyns&v=3',
+], function() {
   'use strict';
 
   /* =======================================================================
